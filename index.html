@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Game Lobby</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="name-popup" class="popup-container">
+        <div class="popup-content">
+            <h2>Willkommen!</h2>
+            <p>Bitte gib deinen Namen für diese Session ein:</p>
+            <input type="text" id="name-input" placeholder="Dein Name">
+            <button id="submit-name">Bestätigen</button>
+        </div>
+    </div>
+
+    <div id="main-content" style="display: none;">
+        <header>
+            <h1>Lobby</h1>
+            <div class="button-container">
+                <button id="create-public">Öffentlich erstellen</button>
+                <button id="create-private">Privat erstellen</button>
+            </div>
+        </header>
+        <main>
+            <h2>Gruppen</h2>
+            <div id="groups-container">
+                <!-- Hier werden die Gruppenkacheln eingefügt -->
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
