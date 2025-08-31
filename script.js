@@ -1,4 +1,48 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    const mockServer = {
+        lobbies: [],
+        nextLobbyId: 1,
+
+        createLobby(name, isPrivate, password) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const newLobby = {
+                        id: this.nextLobbyId++,
+                        name: name,
+                        isPrivate: isPrivate,
+                        password: password,
+                        playerCount: 1,
+                        maxPlayers: 4,
+                    };
+                    this.lobbies.push(newLobby);
+                    resolve(newLobby);
+                }, 500); // Simulate network delay
+            });
+        },
+
+        joinLobby(lobbyId, password) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const lobby = this.lobbies.find(l => l.id === lobbyId);
+
+                    if (!lobby) {
+                        return reject({ code: 'LOBBY_NOT_FOUND' });
+                    }
+
+                    if (lobby.playerCount >= lobby.maxPlayers) {
+                        return reject({ code: 'LOBBY_FULL' });
+                    }
+
+                    // In a real app, you'd check the password for private lobbies here.
+
+                    lobby.playerCount++;
+                    resolve(lobby);
+                }, 500); // Simulate network delay
+            });
+        }
+    };
+
     const namePopup = document.getElementById('name-popup');
     const nameInput = document.getElementById('name-input');
     const submitNameBtn = document.getElementById('submit-name');
@@ -46,23 +90,37 @@ document.addEventListener('DOMContentLoaded', () => {
             if (password === null) return; // User cancelled
         }
 
+        mockServer.createLobby(groupName, isPrivate, password)
+            .then(lobby => {
+                renderGroup(lobby);
+                isInGroup = true;
+            })
+            .catch(error => {
+                console.error("Fehler beim Erstellen der Gruppe:", error);
+                alert("Konnte die Gruppe nicht erstellen.");
+            });
+    };
+
+    const renderGroup = (lobby) => {
         const groupTile = document.createElement('div');
         groupTile.classList.add('group-tile');
+        groupTile.dataset.lobbyId = lobby.id;
 
-        const lockIcon = isPrivate ? '<span class="lock-icon">🔒</span>' : '';
+        const lockIcon = lobby.isPrivate ? '<span class="lock-icon">🔒</span>' : '';
 
         groupTile.innerHTML = `
             <div class="group-info">
-                <h3>${groupName}</h3>
+                <h3>${lobby.name}</h3>
+                <p class="player-count">(${lobby.playerCount}/${lobby.maxPlayers})</p>
             </div>
             <div class="group-actions">
                 ${lockIcon}
+                <button class="join-btn">Beitreten</button>
                 <button class="leave-btn">Verlassen</button>
             </div>
         `;
 
         groupsContainer.appendChild(groupTile);
-        isInGroup = true;
     };
 
     // Event listeners for creating groups
@@ -83,14 +141,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Event Listener for Leave Buttons (using Event Delegation) ---
+    // --- Event Listener for Join/Leave Buttons (using Event Delegation) ---
     groupsContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('leave-btn')) {
-            const groupTile = e.target.closest('.group-tile');
-            if (groupTile) {
-                groupTile.remove();
-                isInGroup = false; // Reset the flag, allowing user to join/create a new group
+        const groupTile = e.target.closest('.group-tile');
+        if (!groupTile) return;
+
+        if (e.target.classList.contains('join-btn')) {
+            if (isInGroup) {
+                alert('Du bist bereits in einer Gruppe. Verlasse zuerst deine aktuelle Gruppe, um einer neuen beizutreten.');
+                return;
             }
+
+            const lobbyId = parseInt(groupTile.dataset.lobbyId);
+            // For private lobbies, a password prompt would be needed here.
+
+            mockServer.joinLobby(lobbyId)
+                .then(updatedLobby => {
+                    const playerCountElement = groupTile.querySelector('.player-count');
+                    playerCountElement.textContent = `(${updatedLobby.playerCount}/${updatedLobby.maxPlayers})`;
+                    isInGroup = true;
+                })
+                .catch(error => {
+                    if (error.code === 'LOBBY_FULL') {
+                        alert('Die Gruppe ist bereits voll.');
+                    } else {
+                        console.error("Fehler beim Beitreten der Gruppe:", error);
+                        alert("Konnte der Gruppe nicht beitreten.");
+                    }
+                });
+        }
+
+        if (e.target.classList.contains('leave-btn')) {
+            // This is a simplified leave logic. In a real app, the server would need to be notified.
+            groupTile.remove();
+            isInGroup = false; // Reset the flag
         }
     });
 });
