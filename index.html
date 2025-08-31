@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multiplayer Game Lobby</title>
+    <title>Gameolympics</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -18,16 +18,32 @@
 
     <div id="main-content" style="display: none;">
         <header>
-            <h1>Lobby</h1>
+            <h1>Gameolympics</h1>
+        </header>
+
+        <div class="top-section">
+            <div class="games-section">
+                <h2>Spiele</h2>
+                <div class="games-container">
+                    <div class="game-placeholder"></div>
+                    <div class="game-placeholder"></div>
+                    <div class="game-placeholder"></div>
+                    <div class="game-placeholder"></div>
+                </div>
+            </div>
+            <div class="wheel-section">
+                <div class="wheel-placeholder"></div>
+            </div>
+        </div>
+
+        <main>
+            <h2>Lobby</h2>
             <div class="button-container">
                 <button id="create-public">Öffentlich erstellen</button>
                 <button id="create-private">Privat erstellen</button>
             </div>
-        </header>
-        <main>
-            <h2>Gruppen</h2>
             <div id="groups-container">
-                <!-- Hier werden die Gruppenkacheln eingefügt -->
+                <!-- Hier werden die Lobbys (rote Rechtecke) eingefügt -->
             </div>
         </main>
     </div>

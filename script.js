@@ -46,9 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const lockIcon = isPrivate ? '<span class="lock-icon">🔒</span>' : '';
 
         groupTile.innerHTML = `
-            <h3>${groupName} ${lockIcon}</h3>
-            <p>Spieler: 1</p>
-            <p>Host: ${sessionUserName}</p>
+            <div class="group-info">
+                <h3>${groupName}</h3>
+            </div>
+            ${lockIcon}
         `;
 
         groupsContainer.appendChild(groupTile);
